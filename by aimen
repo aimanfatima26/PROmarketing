@@ -1,0 +1,25 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+// Abstract class to define common properties of bakery items
+abstract class BakeryItem {
+    String name;
+    double price;
+    int quantity;
+
+    BakeryItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+        this.quantity = 0;
+    }
+
+    abstract void addStock(int qty);
+
+    abstract void sell(int qty);
+
+    void display() {
+        System.out.println(name + ": $" + price + " | Stock: " + quantity);
+    }
+}
