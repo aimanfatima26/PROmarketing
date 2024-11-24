@@ -1,0 +1,109 @@
+
+public class ProMarketing extends JFrame {
+    private BakeryItem[] items;
+    private JTextArea displayArea;
+
+    public ProMarketing() {
+        // Setting up the GUI
+        setTitle("ProMarketing Management System");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        // Creating bakery items
+        items = new BakeryItem[]{
+                new RegularBakeryItem("Bread", 2.5),
+                new RegularBakeryItem("Cake", 15.0),
+                new RegularBakeryItem("Cookies", 5.0),
+                new RegularBakeryItem("Croissant", 3.0),
+                new RegularBakeryItem("Donut", 1.5),
+                new RegularBakeryItem("Muffin", 2.0),
+                new SpecialBakeryItem("Pie", 12.0), // Special item
+                new SpecialBakeryItem("Brownie", 3.5) // Special item
+        };
+
+        // Display Area
+        displayArea = new JTextArea(10, 50);
+        displayArea.setEditable(false);
+        add(new JScrollPane(displayArea));
+
+        // Buttons for actions
+        JButton displayButton = new JButton("Display Items");
+        JButton addStockButton = new JButton("Add Stock");
+        JButton sellItemButton = new JButton("Sell Item");
+        JButton generateSlipButton = new JButton("Generate Slip");
+        JButton exitButton = new JButton("Exit");
+
+        add(displayButton);
+        add(addStockButton);
+        add(sellItemButton);
+        add(generateSlipButton);
+        add(exitButton);
+
+        // Button Actions
+        displayButton.addActionListener(e -> displayItems());
+        addStockButton.addActionListener(e -> addStock());
+        sellItemButton.addActionListener(e -> sellItem());
+        generateSlipButton.addActionListener(e -> generateSlip());
+        exitButton.addActionListener(e -> System.exit(0));
+
+        setVisible(true);
+    }
+
+    private void displayItems() {
+        displayArea.setText("");
+        for (BakeryItem item : items) {
+            displayArea.append(item.name + ": $" + item.price + " | Stock: " + item.quantity + "\n");
+        }
+    }
+
+    private void addStock() {
+        try {
+            int itemNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter item number (0-7) to add stock:"));
+            int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter quantity to add:"));
+            items[itemNumber].addStock(qty);
+            JOptionPane.showMessageDialog(this, "Stock updated!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a number.");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(this, "Invalid item number. Please choose between 0 and 7.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private void sellItem() {
+        try {
+            int itemNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter item number (0-7) to sell:"));
+            int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter quantity to sell:"));
+            items[itemNumber].sell(qty);
+            JOptionPane.showMessageDialog(this, "Sale processed!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a number.");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(this, "Invalid item number. Please choose between 0 and 7.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    private void generateSlip() {
+        // Collect customer and employee details using a GUI
+        String customerName = JOptionPane.showInputDialog("Enter Customer Name:");
+        String address = JOptionPane.showInputDialog("Enter Customer Address:");
+        String phoneNumber = JOptionPane.showInputDialog("Enter Customer Phone Number:");
+        String employeeName = JOptionPane.showInputDialog("Enter Employee Name:");
+
+        // Display the generated slip
+        String slip = "Customer Slip\n" +
+                "Name: " + customerName + "\n" +
+                "Address: " + address + "\n" +
+                "Phone: " + phoneNumber + "\n" +
+                "Handled by: " + employeeName;
+        JOptionPane.showMessageDialog(this, slip);
+    }
+
+    public static void main(String[] args) {
+        new ProMarketing();
+    }
+}
