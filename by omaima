@@ -1,0 +1,45 @@
+
+// Concrete class that extends the abstract BakeryItem class
+class RegularBakeryItem extends BakeryItem {
+    RegularBakeryItem(String name, double price) {
+        super(name, price);
+    }
+
+    @Override
+    void addStock(int qty) {
+        quantity += qty;
+    }
+
+    @Override
+    void sell(int qty) {
+        if (qty <= quantity) {
+            quantity -= qty;
+            System.out.println(qty + " " + name + " sold.");
+        } else {
+            System.out.println("Not enough stock for " + name);
+        }
+    }
+}
+
+// Example subclass to demonstrate inheritance
+class SpecialBakeryItem extends BakeryItem {
+    SpecialBakeryItem(String name, double price) {
+        super(name, price);
+    }
+
+    @Override
+    void addStock(int qty) {
+        quantity += qty;
+        System.out.println("Special stock added for " + name);
+    }
+
+    @Override
+    void sell(int qty) {
+        if (qty <= quantity) {
+            quantity -= qty;
+            System.out.println("Special sale: " + qty + " " + name + " sold.");
+        } else {
+            System.out.println("Not enough special stock for " + name);
+        }
+    }
+}
