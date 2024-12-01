@@ -1,49 +1,36 @@
 
-public class ProMarketing extends JFrame {
-    private BakeryItem[] items;
-    private JTextArea displayArea;
+        String[] columns = {"Item Name", "Price", "Stock"};
+        tableModel = new DefaultTableModel(columns, 0);
+        itemsTable = new JTable(tableModel);
+        JScrollPane tableScroll = new JScrollPane(itemsTable);
+        tableScroll.setPreferredSize(new Dimension(900, 300));
+        itemsTable.setBackground(tableRowColor);
+        itemsTable.getTableHeader().setBackground(tableHeaderColor);
+        itemsTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        add(tableScroll);
 
-    public ProMarketing() {
-        // Setting up the GUI
-        setTitle("ProMarketing Management System");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new FlowLayout());
-
-        // Creating bakery items
-        items = new BakeryItem[]{
-                new RegularBakeryItem("Bread", 2.5),
-                new RegularBakeryItem("Cake", 15.0),
-                new RegularBakeryItem("Cookies", 5.0),
-                new RegularBakeryItem("Croissant", 3.0),
-                new RegularBakeryItem("Donut", 1.5),
-                new RegularBakeryItem("Muffin", 2.0),
-                new SpecialBakeryItem("Pie", 12.0), // Special item
-                new SpecialBakeryItem("Brownie", 3.5) // Special item
-        };
-
-        // Display Area
-        displayArea = new JTextArea(10, 50);
-        displayArea.setEditable(false);
-        add(new JScrollPane(displayArea));
-
-        // Buttons for actions
         JButton displayButton = new JButton("Display Items");
         JButton addStockButton = new JButton("Add Stock");
-        JButton sellItemButton = new JButton("Sell Item");
         JButton generateSlipButton = new JButton("Generate Slip");
         JButton exitButton = new JButton("Exit");
 
+        displayButton.setBackground(buttonColor);
+        addStockButton.setBackground(buttonColor);
+        generateSlipButton.setBackground(buttonColor);
+        exitButton.setBackground(buttonColor);
+
+        displayButton.setFont(new Font("Arial", Font.BOLD, 14));
+        addStockButton.setFont(new Font("Arial", Font.BOLD, 14));
+        generateSlipButton.setFont(new Font("Arial", Font.BOLD, 14));
+        exitButton.setFont(new Font("Arial", Font.BOLD, 14));
+
         add(displayButton);
         add(addStockButton);
-        add(sellItemButton);
         add(generateSlipButton);
         add(exitButton);
 
-        // Button Actions
         displayButton.addActionListener(e -> displayItems());
         addStockButton.addActionListener(e -> addStock());
-        sellItemButton.addActionListener(e -> sellItem());
         generateSlipButton.addActionListener(e -> generateSlip());
         exitButton.addActionListener(e -> System.exit(0));
 
@@ -51,59 +38,70 @@ public class ProMarketing extends JFrame {
     }
 
     private void displayItems() {
-        displayArea.setText("");
+        tableModel.setRowCount(0);
         for (BakeryItem item : items) {
-            displayArea.append(item.name + ": $" + item.price + " | Stock: " + item.quantity + "\n");
+            tableModel.addRow(new Object[]{item.name, "$" + item.price, item.quantity});
         }
     }
 
     private void addStock() {
-        try {
-            int itemNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter item number (0-7) to add stock:"));
-            int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter quantity to add:"));
-            items[itemNumber].addStock(qty);
-            JOptionPane.showMessageDialog(this, "Stock updated!");
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a number.");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            JOptionPane.showMessageDialog(this, "Invalid item number. Please choose between 0 and 7.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
+        JPanel addStockPanel = new JPanel(new GridLayout(9, 2));
+        JTextField breadQty = new JTextField();
+        JTextField cookieQty = new JTextField();
+        JTextField croissantQty = new JTextField();
+        JTextField muffinQty = new JTextField();
+        JTextField pieQty = new JTextField();
+        JTextField brownieQty = new JTextField();
+        JTextField donutQty = new JTextField();
+        JTextField cakeQty = new JTextField();
+
+        addStockPanel.add(new JLabel("Bread Quantity:"));
+        addStockPanel.add(breadQty);
+        addStockPanel.add(new JLabel("Cookies Quantity:"));
+        addStockPanel.add(cookieQty);
+        addStockPanel.add(new JLabel("Croissant Quantity:"));
+        addStockPanel.add(croissantQty);
+        addStockPanel.add(new JLabel("Muffin Quantity:"));
+        addStockPanel.add(muffinQty);
+        addStockPanel.add(new JLabel("Pie Quantity:"));
+        addStockPanel.add(pieQty);
+        addStockPanel.add(new JLabel("Brownie Quantity:"));
+        addStockPanel.add(brownieQty);
+        addStockPanel.add(new JLabel("Donut Quantity:"));
+        addStockPanel.add(donutQty);
+        addStockPanel.add(new JLabel("Cake Quantity:"));
+        addStockPanel.add(cakeQty);
+
+        JButton sellItemButton = new JButton("Sell Item");
+        sellItemButton.addActionListener(e -> {
+            processAddStock(breadQty, "Bread");
+            processAddStock(cookieQty, "Cookies");
+            processAddStock(croissantQty, "Croissant");
+            processAddStock(muffinQty, "Muffin");
+            processAddStock(pieQty, "Pie");
+            processAddStock(brownieQty, "Brownie");
+            processAddStock(donutQty, "Donut");
+            processAddStock(cakeQty, "Cake");
+            displayItems();
+            sellItem(); // After adding stock, go to sell item window
+        });
+
+        addStockPanel.add(sellItemButton);
+
+        JOptionPane.showConfirmDialog(this, addStockPanel, "Add Stock", JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    private void processAddStock(JTextField qtyField, String itemName) {
+        if (!qtyField.getText().isEmpty()) {
+            try {
+                int qty = Integer.parseInt(qtyField.getText());
+                for (BakeryItem item : items) {
+                    if (item.name.equals(itemName)) {
+                        item.addStock(qty);
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                // Skip invalid entries
+            }
         }
     }
-
-    private void sellItem() {
-        try {
-            int itemNumber = Integer.parseInt(JOptionPane.showInputDialog("Enter item number (0-7) to sell:"));
-            int qty = Integer.parseInt(JOptionPane.showInputDialog("Enter quantity to sell:"));
-            items[itemNumber].sell(qty);
-            JOptionPane.showMessageDialog(this, "Sale processed!");
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid input. Please enter a number.");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            JOptionPane.showMessageDialog(this, "Invalid item number. Please choose between 0 and 7.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An unexpected error occurred: " + e.getMessage());
-        }
-    }
-
-    private void generateSlip() {
-        // Collect customer and employee details using a GUI
-        String customerName = JOptionPane.showInputDialog("Enter Customer Name:");
-        String address = JOptionPane.showInputDialog("Enter Customer Address:");
-        String phoneNumber = JOptionPane.showInputDialog("Enter Customer Phone Number:");
-        String employeeName = JOptionPane.showInputDialog("Enter Employee Name:");
-
-        // Display the generated slip
-        String slip = "Customer Slip\n" +
-                "Name: " + customerName + "\n" +
-                "Address: " + address + "\n" +
-                "Phone: " + phoneNumber + "\n" +
-                "Handled by: " + employeeName;
-        JOptionPane.showMessageDialog(this, slip);
-    }
-
-    public static void main(String[] args) {
-        new ProMarketing();
-    }
-}
