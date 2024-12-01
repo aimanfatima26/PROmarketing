@@ -1,1 +1,128 @@
 
+    private void sellItem() {
+        JPanel sellItemPanel = new JPanel(new GridLayout(9, 2));
+        JTextField breadQty = new JTextField();
+        JTextField cookieQty = new JTextField();
+        JTextField croissantQty = new JTextField();
+        JTextField muffinQty = new JTextField();
+        JTextField pieQty = new JTextField();
+        JTextField brownieQty = new JTextField();
+        JTextField donutQty = new JTextField();
+        JTextField cakeQty = new JTextField();
+
+        sellItemPanel.add(new JLabel("Bread Quantity:"));
+        sellItemPanel.add(breadQty);
+        sellItemPanel.add(new JLabel("Cookies Quantity:"));
+        sellItemPanel.add(cookieQty);
+        sellItemPanel.add(new JLabel("Croissant Quantity:"));
+        sellItemPanel.add(croissantQty);
+        sellItemPanel.add(new JLabel("Muffin Quantity:"));
+        sellItemPanel.add(muffinQty);
+        sellItemPanel.add(new JLabel("Pie Quantity:"));
+        sellItemPanel.add(pieQty);
+        sellItemPanel.add(new JLabel("Brownie Quantity:"));
+        sellItemPanel.add(brownieQty);
+        sellItemPanel.add(new JLabel("Donut Quantity:"));
+        sellItemPanel.add(donutQty);
+        sellItemPanel.add(new JLabel("Cake Quantity:"));
+        sellItemPanel.add(cakeQty);
+
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(e -> {
+            processSellItem(breadQty, "Bread");
+            processSellItem(cookieQty, "Cookies");
+            processSellItem(croissantQty, "Croissant");
+            processSellItem(muffinQty, "Muffin");
+            processSellItem(pieQty, "Pie");
+            processSellItem(brownieQty, "Brownie");
+            processSellItem(donutQty, "Donut");
+            processSellItem(cakeQty, "Cake");
+            displayItems();
+            JOptionPane.getRootFrame().dispose(); // Close the sell item window
+        });
+
+        sellItemPanel.add(submitButton);
+
+        JOptionPane.showConfirmDialog(this, sellItemPanel, "Sell Item", JOptionPane.OK_CANCEL_OPTION);
+    }
+
+    private void processSellItem(JTextField qtyField, String itemName) {
+        if (!qtyField.getText().isEmpty()) {
+            try {
+                int qty = Integer.parseInt(qtyField.getText());
+                for (BakeryItem item : items) {
+                    if (item.name.equals(itemName)) {
+                        item.sell(qty);
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                // Skip invalid entries
+            }
+        }
+    }
+
+    private void generateSlip() {
+    JPanel customerPanel = new JPanel(new GridLayout(4, 2));
+    JTextField nameField = new JTextField();
+    JTextField addressField = new JTextField();
+    JTextField contactField = new JTextField();
+    JTextField employeeField = new JTextField();
+
+    customerPanel.add(new JLabel("Customer Name:"));
+    customerPanel.add(nameField);
+    customerPanel.add(new JLabel("Address:"));
+    customerPanel.add(addressField);
+    customerPanel.add(new JLabel("Contact Number:"));
+    customerPanel.add(contactField);
+    customerPanel.add(new JLabel("Employee Name:"));
+    customerPanel.add(employeeField);
+
+    int option = JOptionPane.showConfirmDialog(this, customerPanel, "Customer Details", JOptionPane.OK_CANCEL_OPTION);
+
+    if (option == JOptionPane.OK_OPTION) {
+        StringBuilder slip = new StringBuilder();
+        slip.append("Customer Slip\n");
+        slip.append("Name: ").append(nameField.getText()).append("\n");
+        slip.append("Address: ").append(addressField.getText()).append("\n");
+        slip.append("Contact: ").append(contactField.getText()).append("\n");
+        slip.append("Employee: ").append(employeeField.getText()).append("\n");
+
+        // Show only added stock quantities and prices
+        slip.append("\nAdded Stock Items:\n");
+        totalPrice = 0.0;  // Reset total price for added stock calculation
+        for (BakeryItem item : items) {
+            if (item.initialStock > 0) {
+                slip.append(item.name).append(" - ").append(item.initialStock).append(" @ $").append(item.price).append("\n");
+                totalPrice += item.initialStock * item.price; // Add only added stock price
+            }
+        }
+
+        slip.append("\nTotal Price for Added Stock: $").append(totalPrice).append("\n");
+
+        // Calculate and display the sold items and their total price
+        double soldItemsTotalPrice = 0.0;  // Variable to track total price of sold items
+        slip.append("\nSold Items:\n");
+        for (BakeryItem item : items) {
+            if (item.soldQuantity > 0) {
+                slip.append(item.name).append(" - ").append(item.soldQuantity).append(" @ $").append(item.price).append("\n");
+                soldItemsTotalPrice += item.soldQuantity * item.price;  // Add sold items price to the total
+            }
+        }
+
+        if (soldItemsTotalPrice > 0) {
+            slip.append("\nTotal Price for Sold Items: $").append(soldItemsTotalPrice).append("\n");
+        } else {
+            slip.append("\nNo items sold yet.\n");  // If no items sold, display this message
+        }
+
+        // Display the slip
+        JOptionPane.showMessageDialog(this, slip.toString());
+    }
+}
+
+
+    public static void main(String[] args) {
+        new ProMarketing();
+    }
+}
+
