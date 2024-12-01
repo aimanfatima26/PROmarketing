@@ -1,25 +1,94 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 
-// Abstract class to define common properties of bakery items
 abstract class BakeryItem {
     String name;
     double price;
-    int quantity;
+    int quantity; // Current stock (remaining)
+    int initialStock; // Total added stock
+    int soldQuantity; // Track sold items
 
     BakeryItem(String name, double price) {
         this.name = name;
         this.price = price;
-        this.quantity = 0;
+        this.quantity = 0; // Current stock
+        this.initialStock = 0; // Total stock added
+        this.soldQuantity = 0; // Sold items counter
     }
 
     abstract void addStock(int qty);
 
     abstract void sell(int qty);
+}
 
-    void display() {
-        System.out.println(name + ": $" + price + " | Stock: " + quantity);
+class RegularBakeryItem extends BakeryItem {
+    RegularBakeryItem(String name, double price) {
+        super(name, price);
+    }
+
+    @Override
+    void addStock(int qty) {
+        quantity += qty;
+        initialStock += qty;
+    }
+
+    @Override
+    void sell(int qty) {
+        if (qty <= quantity) {
+            quantity -= qty;
+            soldQuantity += qty; // Track sold items separately
+        }
     }
 }
+
+class SpecialBakeryItem extends BakeryItem {
+    SpecialBakeryItem(String name, double price) {
+        super(name, price);
+    }
+
+    @Override
+    void addStock(int qty) {
+        quantity += qty;
+        initialStock += qty;
+    }
+
+    @Override
+    void sell(int qty) {
+        if (qty <= quantity) {
+            quantity -= qty;
+            soldQuantity += qty; // Track sold items separately
+        }
+    }
+}
+
+public class ProMarketing extends JFrame {
+    private BakeryItem[] items;
+    private JTable itemsTable;
+    private DefaultTableModel tableModel;
+    private double totalPrice = 0.0;
+
+    public ProMarketing() {
+        setTitle("ProMarketing");
+        setSize(1000, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new FlowLayout());
+
+        Color backgroundColor = new Color(255, 248, 220);
+        Color buttonColor = new Color(255, 105, 180);
+        Color tableHeaderColor = new Color(255, 223, 186);
+        Color tableRowColor = new Color(255, 240, 245);
+
+        getContentPane().setBackground(backgroundColor);
+
+        items = new BakeryItem[]{
+                new RegularBakeryItem("Bread", 2.5),
+                new RegularBakeryItem("Cake", 15.0),
+                new RegularBakeryItem("Cookies", 5.0),
+                new RegularBakeryItem("Croissant", 3.0),
+                new RegularBakeryItem("Donut", 1.5),
+                new RegularBakeryItem("Muffin", 2.0),
+                new SpecialBakeryItem("Pie", 12.0),
+                new SpecialBakeryItem("Brownie", 3.5)
+        };
